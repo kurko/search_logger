@@ -1,0 +1,1 @@
+Dir["lib/source_logger/**/*.rb"].each { |f| require f }
