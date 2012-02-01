@@ -1,7 +1,14 @@
 require "spec_helper"
 
 describe "Google parser" do
-  pending "search for a keyword"
+  before :all do
+    @response = SearchLogger::GoogleParser.new.query('amazon').search
+  end
+
+  it "searches for a keyword" do
+    @response.should be_kind_of Array
+  end
+
   pending "returns 100 result per page"
   pending "take the 2 first pages of results"
   pending "parse the response and return a list of results"
