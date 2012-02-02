@@ -9,14 +9,54 @@ describe "Google parser" do
     @response.should be_kind_of Array
   end
 
-  pending "returns 100 result per page"
-  pending "take the 2 first pages of results"
-  pending "parse the response and return a list of results"
-  context "each result" do
-    pending "extract title"
-    pending "extract URL"
-    pending "extract description"
+  # depending on the query string, Google returns more or less than 100 links
+  it "returns around 100 results per page" do
+    @response.size.should > 97
+    @response.size.should < 103
+  end
+
+  pending "take the first 2 pages of results"
+  context "for each result" do
+    it "extracts title" do
+      @response.each { |e| e.title.should_not == "" }
+    end
+
+    it "extract URL" do
+      @response.each { |e| e.url.should_not == "" }
+    end
+
+    it "extract description" do
+      @response.each { |e| e.description.should_not == "" }
+    end
+
     pending "extract the result position"
   end
-  pending "extract keywords from the XML file"
+
+  describe "parsing a mocked response" do
+    let(:result_double) { File.open('spec/support/file_repository/google_result.html').read }
+    context "item 1" do
+      subject { SearchLogger::GoogleParser.new(result_double).search[0] }
+
+      its(:title)       { should == "Amazon.com: Online Shopping for Electronics, Apparel, Computers ..." }
+      its(:url)         { should == "http://www.amazon.com/" }
+      its(:description) { should == "Online retailer of books, movies, music and games along with electronics, toys, apparel, sports, tools, groceries and general home and garden items. Region 1 ..." }
+      pending "position"
+    end
+
+    context "item 7" do
+      subject { SearchLogger::GoogleParser.new(result_double).search[7] }
+
+      its(:title)       { should == "Kindle Fire - Full Color 7\" Multi-Touch Display with Wi ... - Amazon.com" }
+      its(:url)         { should == "http://www.amazon.com/Kindle-Fire-Amazon-Tablet/dp/B0051VVOB2" }
+      its(:description) { should == "The new Kindle Fire for only $199 is more than a tablet - it's a Kindle with a color touchscreen for web, movies, music, apps, games, reading & more." }
+    end
+
+    context "item 18" do
+      subject { SearchLogger::GoogleParser.new(result_double).search[18] }
+
+      its(:title)       { should == "Amazon.ca Books: Online shopping for literature & fiction, new ..." }
+      its(:url)         { should == "http://www.amazon.ca/books-used-books-textbooks/b?ie=UTF8&node=916520" }
+      its(:description) { should == "Online shopping for books in all categories, including literature & fiction, new & used textbooks, biographies, cookbooks, children's books, computer manuals, ..." }
+    end
+  end
 end

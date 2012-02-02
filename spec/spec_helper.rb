@@ -1,3 +1,7 @@
+require "rubygems"
+require "bundler/setup"
+require "nokogiri"
+
 Dir["lib/**/*.rb"].each { |f| require "./"+f }
 
 RSpec.configure do |config|
