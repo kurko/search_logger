@@ -10,12 +10,26 @@ describe "Google parser" do
   end
 
   # depending on the query string, Google returns more or less than 100 links
-  it "returns around 100 results per page" do
-    @response.size.should > 97
-    @response.size.should < 103
+  it "returns around 100 results per page by default" do
+    @response.size.should > 95
+    @response.size.should < 105
   end
 
-  pending "take the first 2 pages of results"
+  context "multiple pages" do
+    before :all do
+      @all_results = SearchLogger::GoogleParser.new.query('amazon').per_page(2).search.map { |e| e.title }
+    end
+
+    it "response should return 2 results" do
+      @all_results.size.should == 2
+    end
+    it "take the first 2 pages of results" do
+      @page_one = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(1).search.map { |e| e.title }
+      @page_two = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(2).search.map { |e| e.title }
+      @all_results.should == @page_one + @page_two
+    end
+  end
+
   context "for each result" do
     it "extracts title" do
       @response.each { |e| e.title.should_not == "" }
