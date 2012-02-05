@@ -1,3 +1,4 @@
+# encoding: utf-8
 require "spec_helper"
 
 describe "Google parser" do
@@ -9,6 +10,11 @@ describe "Google parser" do
     @response.should be_kind_of Array
   end
 
+  it "searches with hebraic keywords" do
+    @response = SearchLogger::GoogleParser.new.query('שפות תכנות').per_page(5).search
+    @response.should have(5).items
+  end
+
   # depending on the query string, Google returns more or less than 100 links
   it "returns around 100 results per page by default" do
     response = SearchLogger::GoogleParser.new.query('amazon').per_page(100).search
@@ -18,24 +24,26 @@ describe "Google parser" do
 
   context "multiple pages" do
     before :all do
-      @all_results = SearchLogger::GoogleParser.new.query('amazon').per_page(2).search.map { |e| e.title }
+      @all_results = SearchLogger::GoogleParser.new.query('amazon').per_page(5).search.map { |e| e.title }
     end
 
     it "returns 2 results" do
-      @all_results.size.should == 2
+      (3..7).should cover(@all_results.size)
     end
 
+    # Google might include news in some responses, so we don't compare them with ==
     it "takes the first 2 pages of results" do
-      @page_one = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(1).search.map { |e| e.title }
-      @page_two = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(2).search.map { |e| e.title }
-      @all_results.should == @page_one + @page_two
+      @page_one = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(1)
+      @page_two = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(2)
+      result = @page_one.search.map { |e| e.title } + @page_two.search.map { |e| e.title }
+      @all_results.should include(result.first, result.last)
     end
 
     it "has the right position numbers" do
       @page_one = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(1).search
-      @page_two = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(2).search
+      @page_two = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(2).last_result(@page_one).search
       @page_one.first.position.should == 1
-      @page_two.first.position.should == 2
+      @page_two.first.position.should == @page_one.size + 1
     end
   end
 

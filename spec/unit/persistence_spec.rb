@@ -65,7 +65,7 @@ describe SearchLogger::Persistence do
       data = [
         { 
           searched_keyword: "amazon",
-          title: "This is a title",
+          title: "This's a title",
           description: "First description.",
           url: "www.github.com",
           position: 1
@@ -80,7 +80,7 @@ describe SearchLogger::Persistence do
       ]
 
       @persistence.data(data).table('my_table').save_to_sql.should == 
-        "INSERT INTO my_table (searched_keyword, title, description, url, position) VALUES ('amazon', 'This is a title', 'First description.', 'www.github.com', '1'), ('amazon', 'This is a title', 'First description.', 'www.github.com', '1')"
+        "INSERT INTO my_table (searched_keyword, title, description, url, position) VALUES ('amazon', 'This\\'s a title', 'First description.', 'www.github.com', '1'), ('amazon', 'This is a title', 'First description.', 'www.github.com', '1')"
     end
   end
 end

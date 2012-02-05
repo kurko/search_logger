@@ -1,11 +1,11 @@
 module SearchLogger
   class GoogleParser
     class Result
-      attr_accessor :title, :url, :description, :position
+      attr_accessor :title, :url, :description, :position, :searched_keyword
 
-      def initialize(node, position)
+      def initialize(node, position, searched_keyword)
         raise "No HTML node was specified" if node == false
-        @position = position
+        @position, @searched_keyword = position, searched_keyword
         @title, @url, @description = nil
         @node = node
       end
@@ -14,6 +14,15 @@ module SearchLogger
         parse_normal_result if @node[:id].nil? || @node[:id] =~ /mbb/
         parse_news_result   if @node[:id] == "newsbox"
         self
+      end
+
+      def as_ary
+        { title:            title,
+          url:              url,
+          description:      description,
+          position:         position,
+          searched_keyword: searched_keyword
+        }
       end
 
       def parse_normal_result

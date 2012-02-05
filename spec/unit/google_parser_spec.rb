@@ -15,23 +15,41 @@ describe "Google parser" do
   end
 
   describe "#page" do
+    subject { SearchLogger::GoogleParser.new }
+
     it "set the current page" do
-      subject.page(3).position_offset.should == 300
+      subject.per_page(5).page(1).position_offset.should == 1
+      subject.per_page(5).page(1).start.should == 0
+      subject.per_page(5).page(2).position_offset.should == 6
+      subject.per_page(5).page(2).start.should == 5
+      subject.per_page(5).page(3).position_offset.should == 11
+      subject.per_page(5).page(3).start.should == 10
     end
   end
 
   describe "#url" do
-    subject { SearchLogger::GoogleParser.new.query('amazon website').per_page(5).page(2) }
+    subject { SearchLogger::GoogleParser.new }
 
     it "creates the correct url" do
-      subject.url.should == "https://www.google.com/search?q=amazon+website&num=5&hl=en&start=9"
+      subject.query('amazon website').per_page(5).page(1)
+      subject.url.should == "https://www.google.com/search?q=amazon+website&num=5&hl=en&start=0"
+    end
+
+    it "creates the correct url" do
+      subject.query('amazon website').per_page(5).page(2)
+      subject.url.should == "https://www.google.com/search?q=amazon+website&num=5&hl=en&start=5"
+    end
+
+    it "creates the correct url" do
+      subject.query('amazon website').per_page(5).page(3)
+      subject.url.should == "https://www.google.com/search?q=amazon+website&num=5&hl=en&start=10"
     end
   end
 
   describe "#search" do
     it "calls Result correctly" do
       result_object = double("Result", parse: nil)
-      result_object.stub(:new).with(anything, an_instance_of(Fixnum)).and_return(result_object)
+      result_object.stub(:new).with(anything, an_instance_of(Fixnum), an_instance_of(String)).and_return(result_object)
       result_object.should_receive(:parse)
       subject.search(result_object)
     end

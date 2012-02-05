@@ -1,3 +1,4 @@
+# encoding: utf-8
 require "mysql2"
 module SearchLogger
   class Persistence
@@ -32,7 +33,7 @@ module SearchLogger
         values[index] = []
         e.each do |key, value|
           fields << key.to_s unless fields_complete
-          values[index] << value.to_s
+          values[index] << client.escape(value.to_s)
         end
         fields_complete = true
       end
