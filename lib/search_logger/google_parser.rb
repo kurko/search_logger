@@ -44,7 +44,7 @@ module SearchLogger
       query_strings << "hl=en"
       query_strings << "start=#{@start}"
       url += query_strings.join("&")
-      require "URI"
+      require "uri"
       url = URI.encode(url)
     end
 
