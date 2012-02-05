@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "guard"
   s.add_runtime_dependency "nokogiri"
   s.add_runtime_dependency "httpclient"
+  s.add_runtime_dependency "mysql2"
 end

@@ -5,11 +5,11 @@ describe "Test" do
     
   end
 
-  def search_google
+  def search_google(xml)
     
   end
 
-  def save_into_mysql
+  def save_into_mysql(google_results)
     
   end
 
@@ -18,9 +18,9 @@ describe "Test" do
   end
 
   pending "load XML, search Google, save into MySQL and export CSV file" do
-    load_xml
-    search_google
-    save_into_mysql
+    xml = load_xml
+    google_results = search_google(xml)
+    save_into_mysql(google_results)
     export_to_csv_file
   end
 end
