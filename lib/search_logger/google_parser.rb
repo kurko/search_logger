@@ -4,7 +4,7 @@ module SearchLogger
 
     def initialize(result = false)
       @result = result if result
-      @position_offset = 0
+      @position_offset = 1
       @num = 100
       @base_url = "https://www.google.com/search?"
     end
@@ -23,9 +23,12 @@ module SearchLogger
       self.tap { |s| s.position_offset = current_page * s.num }
     end
 
-    def search
+    def search(result_object = Result)
       require "nokogiri"
-      Nokogiri::HTML.parse(get_response).css('li.g').each_with_object([]) { |e, all| all << Result.new(e) }
+      Nokogiri::HTML.parse(get_response).css('li.g').each_with_object([]) do |e, all|
+        all << result_object.new(e, @position_offset).parse
+        @position_offset += 1
+      end
     end
 
     def url
@@ -45,48 +48,5 @@ module SearchLogger
       require 'httpclient'
       clnt = HTTPClient.new.get_content(url)
     end    
-
-    class Result
-      attr_accessor :node, :title, :url, :description, :position
-
-      def initialize(node = false)
-        @node = node
-        @title, @url, @description = nil, nil, nil
-        parse_node
-      end
-
-      def parse_node
-        set_result(parse_normal_result) if node[:id].nil? || node[:id] =~ /mbb/
-        set_result(parse_news_result) if node[:id] == "newsbox"
-      end
-
-      def parse_normal_result
-        result = {}.tap do |e|
-          e[:title]       = sanitize_string node.at_css('h3 a').content     unless node.at_css('h3 a').nil?
-          e[:url]         = sanitize_string node.at_css('h3 a')[:href]      unless node.at_css('h3 a').nil?
-          e[:description] = sanitize_string node.at_css('span.st').content  unless node.at_css('span.st').nil?
-        end
-      end
-
-      def parse_news_result
-        result = {}.tap do |e|
-          title_link      = node.at_css('li.w0 span.tl a')
-          description     = node.at_css('li.w0 span[dir=ltr]')
-          e[:title]       = sanitize_string title_link.content  unless title_link.nil?
-          e[:url]         = sanitize_string title_link[:href]   unless title_link.nil?
-          e[:description] = sanitize_string description.content unless description.nil?
-        end
-      end
-
-      def sanitize_string(string)
-        string.gsub(/&amp;/, "&").strip
-      end
-
-      def set_result(options = {})
-        @title        = options[:title]
-        @url          = options[:url]
-        @description  = options[:description]
-      end
-    end
   end
 end

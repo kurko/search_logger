@@ -29,6 +29,13 @@ describe "Google parser" do
   end
 
   describe "#search" do
+    it "calls Result correctly" do
+      result_object = double("Result", parse: nil)
+      result_object.stub(:new).with(anything, an_instance_of(Fixnum)).and_return(result_object)
+      result_object.should_receive(:parse)
+      subject.search(result_object)
+    end
+
     it "is an array" do
       subject.search.should be_kind_of Array
     end

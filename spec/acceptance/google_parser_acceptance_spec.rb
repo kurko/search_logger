@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe "Google parser" do
   before :all do
-    @response = SearchLogger::GoogleParser.new.query('amazon').search
+    @response = SearchLogger::GoogleParser.new.query('amazon').per_page(5).search
   end
 
   it "searches for a keyword" do
@@ -11,8 +11,9 @@ describe "Google parser" do
 
   # depending on the query string, Google returns more or less than 100 links
   it "returns around 100 results per page by default" do
-    @response.size.should > 95
-    @response.size.should < 105
+    response = SearchLogger::GoogleParser.new.query('amazon').per_page(100).search
+    response.should have_at_least(95).items
+    response.should have_at_most(105).items
   end
 
   context "multiple pages" do
@@ -20,13 +21,21 @@ describe "Google parser" do
       @all_results = SearchLogger::GoogleParser.new.query('amazon').per_page(2).search.map { |e| e.title }
     end
 
-    it "response should return 2 results" do
+    it "returns 2 results" do
       @all_results.size.should == 2
     end
-    it "take the first 2 pages of results" do
+
+    it "takes the first 2 pages of results" do
       @page_one = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(1).search.map { |e| e.title }
       @page_two = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(2).search.map { |e| e.title }
       @all_results.should == @page_one + @page_two
+    end
+
+    it "has the right position numbers" do
+      @page_one = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(1).search
+      @page_two = SearchLogger::GoogleParser.new.query('amazon').per_page(1).page(2).search
+      @page_one.first.position.should == 1
+      @page_two.first.position.should == 2
     end
   end
 
@@ -42,8 +51,6 @@ describe "Google parser" do
     it "extract description" do
       @response.each { |e| e.description.should_not == "" }
     end
-
-    pending "extract the result position"
   end
 
   describe "parsing a mocked response" do
@@ -54,7 +61,7 @@ describe "Google parser" do
       its(:title)       { should == "Amazon.com: Online Shopping for Electronics, Apparel, Computers ..." }
       its(:url)         { should == "http://www.amazon.com/" }
       its(:description) { should == "Online retailer of books, movies, music and games along with electronics, toys, apparel, sports, tools, groceries and general home and garden items. Region 1 ..." }
-      pending "position"
+      its(:position)    { should == 1 }
     end
 
     context "item 7" do
@@ -63,6 +70,7 @@ describe "Google parser" do
       its(:title)       { should == "Kindle Fire - Full Color 7\" Multi-Touch Display with Wi ... - Amazon.com" }
       its(:url)         { should == "http://www.amazon.com/Kindle-Fire-Amazon-Tablet/dp/B0051VVOB2" }
       its(:description) { should == "The new Kindle Fire for only $199 is more than a tablet - it's a Kindle with a color touchscreen for web, movies, music, apps, games, reading & more." }
+      its(:position)    { should == 8 }
     end
 
     context "item 18" do
@@ -71,6 +79,7 @@ describe "Google parser" do
       its(:title)       { should == "Amazon.ca Books: Online shopping for literature & fiction, new ..." }
       its(:url)         { should == "http://www.amazon.ca/books-used-books-textbooks/b?ie=UTF8&node=916520" }
       its(:description) { should == "Online shopping for books in all categories, including literature & fiction, new & used textbooks, biographies, cookbooks, children's books, computer manuals, ..." }
+      its(:position)    { should == 19 }
     end
   end
 end
