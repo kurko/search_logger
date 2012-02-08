@@ -24,8 +24,26 @@ describe "Test" do
     persistence.data(google_results).table('google_results').save
   end
 
+  def mysql_data_equals_csv_exported?(mysql, csv)
+    csv.each_with_index do |v, i|
+      if v == csv.first
+        v.join.should == mysql.first.keys.join
+      else
+        v.join.should == mysql[i-1].values.join
+      end
+    end
+  end
+
   def export_to_csv_file
-    
+    csv_file = File.expand_path("../../support/file_repository/exported_from_persistence.csv", __FILE__)
+    data = DummyMysql.load_data
+
+    File.delete csv_file if File.exists? csv_file
+    CSVExporter.new.export data, to: csv_file
+    File.exists?(csv_file).should be_true
+
+    saved_data = CSV.parse File.read(csv_file)
+    mysql_data_equals_csv_exported?(data, saved_data)
   end
 
   it "load XML, search Google, save into MySQL and export CSV file" do
@@ -36,6 +54,6 @@ describe "Test" do
       google_results.should be_kind_of Array
       save_into_mysql(google_results)
     end
-    #export_to_csv_file
+    export_to_csv_file
   end
 end
