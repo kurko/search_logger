@@ -8,11 +8,15 @@ module SearchLogger
     def initialize argv
       @argv = argv
       unless valid_argv?
-        puts "Please, specify a file"
+        puts "Please, specify a xml file with keywords."
+        puts ""
+        puts "Example:"
+        puts ""
+        puts "\s\ssearch_logger ~/my/folder/keywords.xml"
         exit
       end
       unless valid_file?
-        puts "The file you specified is invalid"
+        puts "The file you specified doesn't exist."
         exit
       end
 
