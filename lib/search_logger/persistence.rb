@@ -2,12 +2,17 @@
 require "mysql2"
 module SearchLogger
   class Persistence
-    attr_accessor :table, :client
+    attr_accessor :table, :client, :connection_config
     attr_reader :data
 
-    def initialize
+    def initialize(connection_config = { host: "localhost", username: "root", database: "search_logger" })
       @data = []
-      @client = ::Mysql2::Client.new(host: "localhost", username: "root", database: "search_logger")
+      @connection_config = connection_config
+      establish_connection
+    end
+
+    def establish_connection
+      @client = ::Mysql2::Client.new(@connection_config)
     end
 
     # sets up the operation properties

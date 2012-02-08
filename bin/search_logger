@@ -4,4 +4,9 @@ $:.unshift File.expand_path('../../lib/', __FILE__)
 $:.unshift File.expand_path('../../', __FILE__)
 require "search_logger/exec"
 
-shell = SearchLogger::Exec.new(ARGV).run
+begin
+  shell = SearchLogger::Exec.new(ARGV).run
+rescue Interrupt
+  system "stty echo"
+  exit
+end

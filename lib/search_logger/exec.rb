@@ -15,6 +15,44 @@ module SearchLogger
         puts "The file you specified is invalid"
         exit
       end
+
+      puts "Please, enter your MySQL database information."
+      asks_for_database_config
+    end
+
+    def asks_for_database_config
+      database_config = { 
+        database: "search_logger", 
+        host:     "localhost",
+        username: "root"
+      }
+
+      print "Host address (defaults to 'localhost'): "
+      input = input_text and !input.empty? and database_config[:host] = input
+
+      print "Username (defaults to 'root'): "
+      input = input_text and !input.empty? and database_config[:username] = input
+
+      system "stty -echo"
+      print "Password: "
+      database_config[:password] = input_text
+      system "stty echo"
+
+      begin
+        @database_connection = SearchLogger::Persistence.new(database_config)
+        puts "\n\nA connection was established, starting operation.\n\n"
+      rescue
+        puts "The specified DB does not exists. Please, try again.\n\n"
+        asks_for_database_config
+      end
+    end
+
+    def input_text
+      begin
+        STDOUT.flush
+        STDIN.gets.strip
+      rescue
+      end
     end
 
     def valid_argv?
@@ -68,7 +106,7 @@ module SearchLogger
     end
 
     def save_into_mysql(google_results)
-      persistence = SearchLogger::Persistence.new
+      persistence = @database_connection
       persistence.data(google_results).table('google_results').save
     end
 
@@ -77,7 +115,7 @@ module SearchLogger
       csv_file = File.open(csv_path, "wb")
       
       print "3) Loading data from MySQL google_results table... "
-      data = SearchLogger::Persistence.new.table("google_results").load_data
+      data = @database_connection.table("google_results").load_data
       print "\e[0;32mdone.\n\e[0m"
 
       print "4) Creating CSV file and adding data in #{csv_path}..."
