@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = SearchLogger::VERSION
   s.authors     = ["kurko"]
   s.email       = ["chavedomundo@gmail.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = "http://github.com/kurko/search_logger"
+  s.summary     = %q{Searches Google and saves results.}
+  s.description = %q{This gem reads keywords from a given XML file, searching them on Google. All results are then stored into MySQL and later exported to CSV. This is a concept app. See the gem's website for documentation.}
 
   s.rubyforge_project = "search_logger"
 

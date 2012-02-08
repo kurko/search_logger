@@ -61,7 +61,7 @@ describe "Google parser" do
     end
   end
 
-  describe "parsing a mocked response", wip: true do
+  describe "parsing a mocked response" do
     let(:result_double) { File.open('spec/support/file_repository/google_result_2.html').read }
     context "item 1" do
       subject { SearchLogger::GoogleParser.new(result_double).search[0] }

@@ -33,6 +33,7 @@ module SearchLogger
     def save_to_sql
       fields, values = [], []
       fields_complete = false
+
       # gathers fields and values
       data.each_with_index do |e, index|
         values[index] = []

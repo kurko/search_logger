@@ -20,7 +20,4 @@ describe "Data persistence" do
     saved_data = @another_persistence_object.table("google_results").load_data
     saved_data.map { |e| e.tap { |x| x.delete(:id) }.tap { |x| x.delete(:created_at) } }.should == data
   end
-
-  pending "when there's no database created"
-
 end

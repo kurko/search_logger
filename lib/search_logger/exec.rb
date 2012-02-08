@@ -95,11 +95,9 @@ module SearchLogger
     end
 
     def search_google(query_string)
-      source = File.open('spec/support/file_repository/google_result_2.html').read
-      #page_one = SearchLogger::GoogleParser.new.query(query_string).per_page(100).page(1).search
-      #page_two = SearchLogger::GoogleParser.new.query(query_string).per_page(100).page(2).last_result(page_one).search
-      page_one = SearchLogger::GoogleParser.new(source).search
-      page_two = SearchLogger::GoogleParser.new(source).last_result(page_one).search
+      page_one = SearchLogger::GoogleParser.new.query(query_string).per_page(100).page(1).search
+      page_two = SearchLogger::GoogleParser.new.query(query_string).per_page(100).page(2).last_result(page_one).search
+
       results = []
       position = 1
       (page_one + page_two).each do |e|

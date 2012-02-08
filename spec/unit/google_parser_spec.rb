@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Google parser", wip: true do
+describe "Google parser" do
   let(:result_double) { File.open('spec/support/file_repository/google_result_2.html').read }
   subject { SearchLogger::GoogleParser.new(result_double) }
 

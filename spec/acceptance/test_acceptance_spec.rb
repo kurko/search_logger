@@ -14,7 +14,6 @@ describe "Test" do
     (page_one + page_two).each do |e|
       e.position.should == position
       results << e.as_ary
-
       position += 1
     end
     results

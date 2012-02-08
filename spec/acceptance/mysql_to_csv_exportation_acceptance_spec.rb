@@ -34,6 +34,4 @@ describe "Exporting MySQL data to a CSV file" do
     saved_data[2].join(',').should == 'שפות תכנות,2,www.github.com,שפות תכנות,שפות, תכנות.'
     saved_data[3].join(',').should == 'amazon,3,www.github.com,This is the, third title,Third description.'
   end
-
-  pending "check if dir has write permission"
 end

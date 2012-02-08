@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    search_logger (0.0.1)
+    search_logger (0.0.4)
       httpclient
       mysql2
       nokogiri
