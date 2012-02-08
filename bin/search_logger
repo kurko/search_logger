@@ -1,0 +1,7 @@
+#!/usr/bin/ruby
+
+$:.unshift File.expand_path('../../lib/', __FILE__)
+$:.unshift File.expand_path('../../', __FILE__)
+require "search_logger/exec"
+
+shell = SearchLogger::Exec.new(ARGV).run
