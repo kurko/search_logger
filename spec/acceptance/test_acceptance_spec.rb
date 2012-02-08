@@ -14,6 +14,7 @@ describe "Test" do
     (page_one + page_two).each do |e|
       e.position.should == position
       results << e.as_ary
+
       position += 1
     end
     results
@@ -25,11 +26,12 @@ describe "Test" do
   end
 
   def mysql_data_equals_csv_exported?(mysql, csv)
+    correct_order = %w(keyword position url title description)
     csv.each_with_index do |v, i|
       if v == csv.first
-        v.join.should == mysql.first.keys.join
+        v.join.should == correct_order.join
       else
-        v.join.should == mysql[i-1].values.join
+        v.join.should == correct_order.map { |e| mysql[i-1][e.gsub(/(keyword)/, 'searched_\1').to_sym] }.join
       end
     end
   end
@@ -50,7 +52,7 @@ describe "Test" do
     xml = load_xml
     xml.should have(5).items
     xml.each do |value|
-      google_results = search_google(value)
+      google_results = search_google(value) 
       google_results.should be_kind_of Array
       save_into_mysql(google_results)
     end

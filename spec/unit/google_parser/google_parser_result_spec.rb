@@ -1,18 +1,18 @@
 require "spec_helper"
 
 describe SearchLogger::GoogleParser::Result do
-  let(:result_double) { File.open('spec/support/file_repository/google_result.html').read }
+  let(:result_double) { File.open('spec/support/file_repository/google_result_2.html').read }
 
-  describe "parsing a single result" do
+  describe "parsing a single result", wip: true do
     before do
       @node = Nokogiri::HTML.parse(result_double).css('li.g').first
     end
 
     subject { SearchLogger::GoogleParser::Result.new(@node, 10, 'amazon').parse_normal_result }
 
-    its(:title)       { should == "Amazon.com: Online Shopping for Electronics, Apparel, Computers ..." }
-    its(:url)         { should == "http://www.amazon.com/" }
-    its(:description) { should == "Online retailer of books, movies, music and games along with electronics, toys, apparel, sports, tools, groceries and general home and garden items. Region 1 ..." }
+    its(:title)       { should == "Xovi: mehr als ein SEO Tool - online Marketing (SEO, SEM, Affiliate ..." }
+    its(:url)         { should == "http://www.xovi.de/" }
+    its(:description) { should == "Setzen Sie unsere SEO Software f?r Ihr Online Marketing Budget intelligent und erfolgreich ein. Verlassen Sie sich nicht auf Ihr Bauchgef?hl oder Ihre Erfahrung ..." }
     its(:position)    { should == 10 }
     its(:searched_keyword) { should == 'amazon' }
   end

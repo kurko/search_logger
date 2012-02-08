@@ -27,9 +27,9 @@ module SearchLogger
 
       def parse_normal_result
         self.tap do |e|
-          e.title       = sanitize_string @node.at_css('h3 a').content     unless @node.at_css('h3 a').nil?
-          e.url         = sanitize_string @node.at_css('h3 a')[:href]      unless @node.at_css('h3 a').nil?
-          e.description = sanitize_string @node.at_css('span.st').content  unless @node.at_css('span.st').nil?
+          e.title       = sanitize_string @node.at_css('h3 a').content  unless @node.at_css('h3 a').nil?
+          e.url         = sanitize_string @node.at_css('h3 a')[:href]   unless @node.at_css('h3 a').nil?
+          e.description = sanitize_string @node.at_css('div.s').content unless @node.at_css('div.s').nil?
         end
       end
 
@@ -41,10 +41,13 @@ module SearchLogger
           e.url         = sanitize_string title_link[:href]   unless title_link.nil?
           e.description = sanitize_string description.content unless description.nil?
         end
-      end
+      end 
 
       def sanitize_string(string)
-        string.gsub(/&amp;/, "&").strip
+        string.gsub(/&amp;/, "&")
+              .gsub(/[\s]{1,99}/, " ")
+              .strip
+              .gsub(/\s\.\.\.[\s]{0,1}[w]{0,3}.*- Cached - Similar/, " ...")
       end
 
       def set_result(options = {})

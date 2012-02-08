@@ -29,10 +29,10 @@ describe "Exporting MySQL data to a CSV file" do
     CSVExporter.new.export data, to: target_file
     File.exists?(target_file).should be_true
     saved_data = CSV.parse File.read(target_file)
-    saved_data[0].join(',').should == 'id,searched_keyword,title,url,description,position,created_at'
-    saved_data[1].join(',').should == '726,amazon,This is a title,www.github.com,First description.,1,'
-    saved_data[2].join(',').should == '727,שפות תכנות,שפות תכנות,www.github.com,שפות, תכנות.,2,'
-    saved_data[3].join(',').should == '728,amazon,This is the, third title,www.github.com,Third description.,3,'
+    saved_data[0].join(',').should == 'keyword,position,url,title,description'
+    saved_data[1].join(',').should == 'amazon,1,www.github.com,This is a title,First description.'
+    saved_data[2].join(',').should == 'שפות תכנות,2,www.github.com,שפות תכנות,שפות, תכנות.'
+    saved_data[3].join(',').should == 'amazon,3,www.github.com,This is the, third title,Third description.'
   end
 
   pending "check if dir has write permission"

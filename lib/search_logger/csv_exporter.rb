@@ -10,9 +10,9 @@ class CSVExporter
 
   def save_to_file
     CSV.open(@to, "wb") do |csv|
-      csv << @data.first.keys
-      @data.each do |data|
-        csv << data.values
+      csv << %w{keyword position url title description}
+      @data.each do |d|
+        csv << [d[:searched_keyword], d[:position], d[:url], d[:title], d[:description]]
       end
     end
   end

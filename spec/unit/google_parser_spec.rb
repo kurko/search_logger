@@ -1,7 +1,7 @@
 require "spec_helper"
 
-describe "Google parser" do
-  let(:result_double) { File.open('spec/support/file_repository/google_result.html').read }
+describe "Google parser", wip: true do
+  let(:result_double) { File.open('spec/support/file_repository/google_result_2.html').read }
   subject { SearchLogger::GoogleParser.new(result_double) }
 
   it "initialization with a double" do
@@ -62,8 +62,8 @@ describe "Google parser" do
       subject.search.first.should be_kind_of SearchLogger::GoogleParser::Result
     end
 
-    it "has two results" do
-      subject.search.size.should == 41
+    it "has 100 results" do
+      subject.search.size.should == 100
     end
   end
 end
